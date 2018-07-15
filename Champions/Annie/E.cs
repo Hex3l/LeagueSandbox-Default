@@ -3,11 +3,13 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
-
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 
 namespace Spells
 {
-    public class MoltenShield : GameScript
+    public class MoltenShield : IGameScript
     {
 
         public void OnActivate(Champion owner)
@@ -20,13 +22,13 @@ namespace Spells
         }
         public void OnStartCasting(Champion owner, Spell spell, AttackableUnit target)
         {
-            spell.spellAnimation("SPELL3", owner);
+            spell.SpellAnimation("SPELL3", owner);
         }
         public void OnFinishCasting(Champion owner, Spell spell, AttackableUnit target)
         {
             float duration = new float[] { 5.0f, 6.0f, 8.0f }[spell.Level - 1];
 
-            var buff = ((ObjAIBase)target).AddBuffGameScript("MoltenShield", "MoltenShield", spell, -1, true);
+            var buff = ((ObjAiBase)target).AddBuffGameScript("MoltenShield", "MoltenShield", spell, -1, true);
 
             ApiFunctionManager.CreateTimer(duration, () =>
             {

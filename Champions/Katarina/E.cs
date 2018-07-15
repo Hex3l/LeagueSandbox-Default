@@ -5,10 +5,13 @@ using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using LeagueSandbox.GameServer.Logic.API;
 using System.Linq;
 using LeagueSandbox.GameServer;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 
 namespace Spells
 {
-    public class KatarinaE : GameScript
+    public class KatarinaE : IGameScript
     {
         public void OnActivate(Champion owner)
         {
@@ -25,7 +28,7 @@ namespace Spells
                 return;
             }
 
-            spell.spellAnimation("SPELL3", owner);
+            spell.SpellAnimation("SPELL3", owner);
             ApiFunctionManager.AddParticleTarget(owner, "katarina_shadowStep_cas.troy", owner);
             ApiFunctionManager.TeleportTo(owner, target.X + 80, target.Y + 80);
         }
@@ -39,7 +42,7 @@ namespace Spells
 
             ApiFunctionManager.AddParticleTarget(owner, "katarina_shadowStep_cas.troy", owner);
 
-            var damage = new[] { 60, 85, 110, 135, 160 }[spell.Level - 1] + owner.GetStats().AbilityPower.Total * 0.4f;
+            var damage = new[] { 60, 85, 110, 135, 160 }[spell.Level - 1] + owner.Stats.AbilityPower.Total * 0.4f;
 
             if (target.Team != owner.Team)
             {

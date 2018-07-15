@@ -3,27 +3,31 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Scripting;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 
 
 namespace ImpureShotsActive
 {
-    internal class ImpureShotsActive : BuffGameScript
+    internal class ImpureShotsActive : IBuffGameScript
     {
-        private ChampionStatModifier _AttackSpeedMod;
-        private ObjAIBase _owningUnit;
+        private StatsModifier _AttackSpeedMod;
+        private ObjAiBase _owningUnit;
         private Spell _owningSpell;
 
-        public void OnActivate(ObjAIBase buffOwner, Spell ownerSpell)
+        public void OnActivate(ObjAiBase buffOwner, Spell ownerSpell)
         {
             _owningSpell = ownerSpell;
             _owningUnit = buffOwner;
-            _AttackSpeedMod = new ChampionStatModifier();
+            _AttackSpeedMod = new StatsModifier();
             _AttackSpeedMod.AttackSpeed.PercentBonus = (new float[] { 0.2f, 0.3f, 0.4f, 0.5f, 0.6f })[ownerSpell.Level - 1];
             buffOwner.AddStatModifier(_AttackSpeedMod);
             ApiEventManager.OnHitUnit.AddListener(this, buffOwner, OnAutoAttack);
         }
 
-        public void OnDeactivate(ObjAIBase unit)
+        public void OnDeactivate(ObjAiBase unit)
         {
             ApiEventManager.OnHitUnit.RemoveListener(this);
             unit.RemoveStatModifier(_AttackSpeedMod);
@@ -31,9 +35,9 @@ namespace ImpureShotsActive
 
         private void OnAutoAttack(AttackableUnit target, bool isCrit)
         {
-            if(target is ObjAIBase)
+            if(target is ObjAiBase)
             {
-                ((ObjAIBase)target).AddBuffGameScript("GrievousWounds", "GrievousWounds", _owningSpell, 2.0f, true);
+                ((ObjAiBase)target).AddBuffGameScript("GrievousWounds", "GrievousWounds", _owningSpell, 2.0f, true);
             }
         }
 

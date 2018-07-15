@@ -2,10 +2,13 @@ using System.Numerics;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 
 namespace Spells
 {
-    public class LucianW : GameScript
+    public class LucianW : IGameScript
     {
         public void OnActivate(Champion owner)
         {
@@ -31,7 +34,7 @@ namespace Spells
 
         public void ApplyEffects(Champion owner, AttackableUnit target, Spell spell, Projectile projectile)
         {
-            //float damage = 20 + (spellLevel * 40) + owner.GetStats().AbilityPower.Total * 0.9;
+            //float damage = 20 + (spellLevel * 40) + owner.Stats.AbilityPower.Total * 0.9;
             //dealMagicalDamage(damage);
         }
 

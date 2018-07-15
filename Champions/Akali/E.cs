@@ -3,14 +3,17 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using LeagueSandbox.GameServer;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 
 namespace Spells
 {
 
-    public class AkaliShadowSwipe : GameScript
+    public class AkaliShadowSwipe : IGameScript
     {
-        Champion owner;
+
         public void OnActivate(Champion owner)
         {
         }
@@ -25,15 +28,15 @@ namespace Spells
 
         public void OnFinishCasting(Champion owner, Spell spell, AttackableUnit target)
         {
-            var ap = owner.GetStats().AbilityPower.Total * 0.3f;
-            var ad = owner.GetStats().AttackDamage.Total * 0.6f;
+            var ap = owner.Stats.AbilityPower.Total * 0.3f;
+            var ad = owner.Stats.AttackDamage.Total * 0.6f;
             var damage = 5 + spell.Level * 25 + ap + ad;
             foreach (var enemyTarget in ApiFunctionManager.GetUnitsInRange(owner, 300, true)
                 .Where(x => x.Team == CustomConvert.GetEnemyTeam(owner.Team)))
             {
                 if (enemyTarget == null)
                     continue;
-                if(ApiFunctionManager.UnitIsChampion(enemyTarget) | ApiFunctionManager.UnitIsMonster(enemyTarget) | ApiFunctionManager.UnitIsMinion(enemyTarget))
+                if(enemyTarget is Champion || enemyTarget is Minion || enemyTarget is Monster)
                 {
                     AkaliMota.OnProc(enemyTarget, false);
                     enemyTarget.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL,

@@ -6,30 +6,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 
 namespace EveFrenzy
 {
-    class EveFrenzy : BuffGameScript
+    class EveFrenzy : IBuffGameScript
     {
-        private ChampionStatModifier _statMod;
+        private StatsModifier _statMod;
         private float _currentStatMod;
-        private ObjAIBase _ownerUnit;
+        private ObjAiBase _ownerUnit;
         private Buff _visualBuff;
 
-        public void OnActivate(ObjAIBase unit, Spell ownerSpell)
+        public void OnActivate(ObjAiBase unit, Spell ownerSpell)
         {
             _ownerUnit = unit;
             _currentStatMod = (new float[] { 0.30f, 0.40f, 0.50f, 0.60f, 0.70f })[ownerSpell.Level - 1];
-            _statMod = new ChampionStatModifier();
+            _statMod = new StatsModifier();
             _statMod.MoveSpeed.PercentBonus = _currentStatMod;
             _ownerUnit.AddStatModifier(_statMod);
-            _visualBuff = ApiFunctionManager.AddBuffHUDVisual("EveFrenzy", 5.0f, 5, _ownerUnit, -1);
+            _visualBuff = ApiFunctionManager.AddBuffHudVisual("EveFrenzy", 5.0f, 5, _ownerUnit, -1);
         }
 
-        public void OnDeactivate(ObjAIBase unit)
+        public void OnDeactivate(ObjAiBase unit)
         {
             _ownerUnit.RemoveStatModifier(_statMod);
-            ApiFunctionManager.RemoveBuffHUDVisual(_visualBuff);
+            ApiFunctionManager.RemoveBuffHudVisual(_visualBuff);
         }
 
         public void OnUpdate(double diff)

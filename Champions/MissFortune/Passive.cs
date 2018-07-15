@@ -1,11 +1,14 @@
 ﻿using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace Spells
 {
-    public class MissFortuneStrut : GameScript
+    public class MissFortuneStrut : IGameScript
     {
         
         private double _currentTime;
@@ -36,7 +39,7 @@ namespace Spells
             _strutIsActive = false;
             if (_visualBuff == null)
             {
-                _visualBuff = ApiFunctionManager.AddBuffHUDVisual("Miss Fortune Strut Cooldown", -1, 0, _owningChampion, -1);
+                _visualBuff = ApiFunctionManager.AddBuffHudVisual("Miss Fortune Strut Cooldown", -1, 0, _owningChampion, -1);
             }
             ApiFunctionManager.LogInfo("Miss Fortune was damaged. Deactivating Strut.");
         }
@@ -80,7 +83,7 @@ namespace Spells
                 {
                     if(_visualBuff != null)
                     {
-                        ApiFunctionManager.RemoveBuffHUDVisual(_visualBuff);
+                        ApiFunctionManager.RemoveBuffHudVisual(_visualBuff);
                         _visualBuff = null;
                     }
                     ApiFunctionManager.LogInfo("Miss Fortune has not been damaged in 5 seconds. Activating Strut.");

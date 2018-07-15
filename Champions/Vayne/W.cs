@@ -2,18 +2,21 @@
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace Spells
 {
-    public class VayneSilveredBolts : GameScript
+    public class VayneSilveredBolts : IGameScript
     {
         
         private bool _silverBoltsLearned;
         private double _lastAttackedValidTarget;
         private double _currentTime;
         private Champion _owningChampion;
-        private ObjAIBase _lastTarget;
+        private ObjAiBase _lastTarget;
         private Spell _owningSpell;
         private byte _silverBoltsStacks;
         private Particle _silverBoltsParticle;
@@ -57,14 +60,14 @@ namespace Spells
                 }
             }
 
-            ObjAIBase silverTarget = target as ObjAIBase;
+            ObjAiBase silverTarget = target as ObjAiBase;
             if (silverTarget != null)
             {
                 _lastAttackedValidTarget = _currentTime;
 
                 if (_silverBoltsBuff != null)
                 {
-                    ApiFunctionManager.RemoveBuffHUDVisual(_silverBoltsBuff);
+                    ApiFunctionManager.RemoveBuffHudVisual(_silverBoltsBuff);
                     _silverBoltsBuff = null;
                 }
 
@@ -83,7 +86,7 @@ namespace Spells
                 }
                 _silverBoltsStacks += 1;
                 if (_silverBoltsStacks < 3) {
-                    _silverBoltsBuff = ApiFunctionManager.AddBuffHUDVisual("VayneSilveredDebuff", 3.5f, _silverBoltsStacks, silverTarget, _owningChampion, -1);
+                    _silverBoltsBuff = ApiFunctionManager.AddBuffHudVisual("VayneSilveredDebuff", 3.5f, _silverBoltsStacks, silverTarget, _owningChampion, -1);
                 }
                 if (_silverBoltsParticle != null)
                 {
@@ -100,7 +103,7 @@ namespace Spells
                 else
                 {
                     _silverBoltsStacks = 0; // We're at 3 stacks. Apply damage and reset to zero.
-                    float healthRatio = (new float[] { 0.04f, 0.05f, 0.06f, 0.07f, 0.08f }[_owningSpell.Level - 1]) * silverTarget.GetStats().HealthPoints.Total;
+                    float healthRatio = (new float[] { 0.04f, 0.05f, 0.06f, 0.07f, 0.08f }[_owningSpell.Level - 1]) * silverTarget.Stats.HealthPoints.Total;
                     float damage = new float[] { 20, 30, 40, 50, 60 }[_owningSpell.Level - 1] + healthRatio;
                     silverTarget.TakeDamage(_owningChampion, damage, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_PASSIVE, false);
                     ApiFunctionManager.AddParticleTarget(_owningChampion, "vayne_W_tar.troy", silverTarget);
@@ -128,7 +131,7 @@ namespace Spells
                 _silverBoltsStacks = 0;
                 if (_silverBoltsBuff != null)
                 {
-                    ApiFunctionManager.RemoveBuffHUDVisual(_silverBoltsBuff);
+                    ApiFunctionManager.RemoveBuffHudVisual(_silverBoltsBuff);
                 }
                 _silverBoltsBuff = null;
             }

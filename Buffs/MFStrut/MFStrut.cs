@@ -1,34 +1,38 @@
 ﻿using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Scripting;
 using LeagueSandbox.GameServer.Logic.API;
+using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace MFStrut
 {
-    internal class MFStrut : BuffGameScript
+    internal class MFStrut : IBuffGameScript
     {
-        private ChampionStatModifier _statMod;
+        private StatsModifier _statMod;
         private float _currentStatMod;
         private double _currentTime;
         private double _lastUpdate;
-        private ObjAIBase _ownerUnit;
+        private ObjAiBase _ownerUnit;
         private Buff _visualBuff;
 
-        public void OnActivate(ObjAIBase unit, Spell ownerSpell)
+        public void OnActivate(ObjAiBase unit, Spell ownerSpell)
         {
             _currentTime = 0;
             _lastUpdate = 0;
             _currentStatMod = 25;
             _ownerUnit = unit;
-            _statMod = new ChampionStatModifier();
+            _statMod = new StatsModifier();
             _statMod.MoveSpeed.FlatBonus = _currentStatMod;
             _ownerUnit.AddStatModifier(_statMod);
-            _visualBuff = ApiFunctionManager.AddBuffHUDVisual("MissFortuneStrutStacks", 5.0f, (int)_currentStatMod, _ownerUnit, -1);
+            _visualBuff = ApiFunctionManager.AddBuffHudVisual("MissFortuneStrutStacks", 5.0f, (int)_currentStatMod, _ownerUnit, -1);
         }
 
-        public void OnDeactivate(ObjAIBase unit)
+        public void OnDeactivate(ObjAiBase unit)
         {
             _ownerUnit.RemoveStatModifier(_statMod);
-            ApiFunctionManager.RemoveBuffHUDVisual(_visualBuff);
+            ApiFunctionManager.RemoveBuffHudVisual(_visualBuff);
         }
 
         public void OnUpdate(double diff)
@@ -43,11 +47,11 @@ namespace MFStrut
                         _currentStatMod = 70;
                     }
                     _ownerUnit.RemoveStatModifier(_statMod);
-                    ApiFunctionManager.RemoveBuffHUDVisual(_visualBuff);
+                    ApiFunctionManager.RemoveBuffHudVisual(_visualBuff);
                     _statMod.MoveSpeed.FlatBonus = _currentStatMod;
                     _lastUpdate = _currentTime;
                     _ownerUnit.AddStatModifier(_statMod);
-                    _visualBuff = ApiFunctionManager.AddBuffHUDVisual("MissFortuneStrutStacks", 5.0f, (int)_currentStatMod, _ownerUnit, -1);
+                    _visualBuff = ApiFunctionManager.AddBuffHudVisual("MissFortuneStrutStacks", 5.0f, (int)_currentStatMod, _ownerUnit, -1);
                 }
             }
         }

@@ -2,11 +2,14 @@
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 using System.Collections.Generic;
 
 namespace Spells
 {
-    public class ItemTiamatCleave : GameScript
+    public class ItemTiamatCleave : IGameScript
     {
 
         private Champion _owningChampion;
@@ -23,7 +26,7 @@ namespace Spells
             var farRangeTargets = ApiFunctionManager.GetUnitsInRange(owner, 400, true);
             CorrectLists(closeRangeTargets, midRangeTargets, farRangeTargets);
 
-            var ad = _owningChampion.GetStats().AttackDamage.Total;
+            var ad = _owningChampion.Stats.AttackDamage.Total;
             foreach (var unit in closeRangeTargets)
             {
                 unit.TakeDamage(_owningChampion, ad * 0.6f, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_PASSIVE, false);
@@ -60,7 +63,7 @@ namespace Spells
             var farRangeTargets = ApiFunctionManager.GetUnitsInRange(target, 385, true);
             CorrectLists(closeRangeTargets, midRangeTargets, farRangeTargets);
 
-            var ad = _owningChampion.GetStats().AttackDamage.Total;
+            var ad = _owningChampion.Stats.AttackDamage.Total;
             foreach(var unit in closeRangeTargets)
             {
                 unit.TakeDamage(_owningChampion, ad * 0.6f, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_PASSIVE, false);

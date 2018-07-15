@@ -2,11 +2,14 @@
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace Spells
 {
-    public class VayneInquisition : GameScript
+    public class VayneInquisition : IGameScript
     {
 
         public void OnActivate(Champion owner)
@@ -27,7 +30,7 @@ namespace Spells
         {
             float duration = new float[] { 8.0f, 10.0f, 12.0f }[spell.Level - 1];
 
-            var buff = ((ObjAIBase)target).AddBuffGameScript("FinalHourBuff", "FinalHourBuff", spell, -1, true);
+            var buff = ((ObjAiBase)target).AddBuffGameScript("FinalHourBuff", "FinalHourBuff", spell, -1, true);
 
             ApiFunctionManager.CreateTimer(duration, () =>
             {
