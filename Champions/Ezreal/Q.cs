@@ -3,10 +3,13 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 
 namespace Spells
 {
-    public class EzrealMysticShot : GameScript
+    public class EzrealMysticShot : IGameScript
     {
         public void OnActivate(Champion owner)
         {
@@ -31,26 +34,26 @@ namespace Spells
             spell.AddProjectile("EzrealMysticShotMissile", trueCoords.X, trueCoords.Y);
 
             var buff = owner.AddBuffGameScript("Quickdraw", "Quickdraw", spell);
-            var visualBuff = ApiFunctionManager.AddBuffHUDVisual("Quickdraw", 6.0f, 0, owner);
+            var visualBuff = ApiFunctionManager.AddBuffHudVisual("Quickdraw", 6.0f, 0, owner);
 
             ApiFunctionManager.CreateTimer(6.0f, () =>
             {
-                ApiFunctionManager.RemoveBuffHUDVisual(visualBuff);
+                ApiFunctionManager.RemoveBuffHudVisual(visualBuff);
                 owner.RemoveBuffGameScript(buff);
             });
         }
 
         public void ApplyEffects(Champion owner, AttackableUnit target, Spell spell, Projectile projectile)
         {
-            var ad = owner.GetStats().AttackDamage.Total * 1.1f;
-            var ap = owner.GetStats().AbilityPower.Total * 0.4f;
+            var ad = owner.Stats.AttackDamage.Total * 1.1f;
+            var ap = owner.Stats.AbilityPower.Total * 0.4f;
             var damage = 15 + spell.Level * 20 + ad + ap;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
             spell.LowerCooldown(0, 1);
             spell.LowerCooldown(1, 1);
             spell.LowerCooldown(2, 1);
             spell.LowerCooldown(3, 1);
-            projectile.setToRemove();
+            projectile.SetToRemove();
         }
 
         public void OnUpdate(double diff)

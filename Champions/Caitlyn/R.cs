@@ -1,10 +1,13 @@
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace Spells
 {
-    public class CaitlynAceintheHole : GameScript
+    public class CaitlynAceintheHole : IGameScript
     {
         public void OnActivate(Champion owner)
         {
@@ -28,12 +31,11 @@ namespace Spells
             if (target != null && !target.IsDead)
             {
                 // 250/475/700
-                var damage = 250 + owner.GetStats().AttackDamage.Total * 2;
-                target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_SPELL,
-                    false);
+                var damage = (new float[] { 250, 475, 700 }[spell.Level - 1]) + owner.Stats.AttackDamage.Total * 2;
+                target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
             }
 
-            projectile.setToRemove();
+            projectile.SetToRemove();
         }
 
         public void OnUpdate(double diff)

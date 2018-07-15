@@ -3,10 +3,13 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 
 namespace Spells
 {
-    public class EzrealArcaneShift : GameScript
+    public class EzrealArcaneShift : IGameScript
     {
         public void OnActivate(Champion owner)
         {
@@ -58,7 +61,7 @@ namespace Spells
 
             if (target2 != null)
             {
-                if (!ApiFunctionManager.UnitIsTurret(target2))
+                if (!(target2 is LaneTurret))
                 {
                     spell.AddProjectileTarget("EzrealArcaneShiftMissile", target2);
                 }
@@ -67,9 +70,9 @@ namespace Spells
 
         public void ApplyEffects(Champion owner, AttackableUnit target, Spell spell, Projectile projectile)
         {
-            target.TakeDamage(owner, 25f + spell.Level * 50f + owner.GetStats().AbilityPower.Total * 0.75f,
+            target.TakeDamage(owner, 25f + spell.Level * 50f + owner.Stats.AbilityPower.Total * 0.75f,
                 DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
-            projectile.setToRemove();
+            projectile.SetToRemove();
         }
 
         public void OnUpdate(double diff)

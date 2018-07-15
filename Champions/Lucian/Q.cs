@@ -3,10 +3,13 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 
 namespace Spells
 {
-    public class LucianQ : GameScript
+    public class LucianQ : IGameScript
     {
         public void OnActivate(Champion owner)
         {
@@ -24,7 +27,7 @@ namespace Spells
             var trueCoords = current + range;
 
             spell.AddLaser(trueCoords.X, trueCoords.Y);
-            spell.spellAnimation("SPELL1", owner);
+            spell.SpellAnimation("SPELL1", owner);
             ApiFunctionManager.AddParticle(owner, "Lucian_Q_laser.troy", trueCoords.X, trueCoords.Y);
             ApiFunctionManager.AddParticleTarget(owner, "Lucian_Q_cas.troy", owner);
         }
@@ -35,7 +38,7 @@ namespace Spells
 
         public void ApplyEffects(Champion owner, AttackableUnit target, Spell spell, Projectile projectile)
         {
-            var damage = owner.GetStats().AttackDamage.Total * (0.45f + spell.Level * 0.15f) + (50 + spell.Level * 30);
+            var damage = owner.Stats.AttackDamage.Total * (0.45f + spell.Level * 0.15f) + (50 + spell.Level * 30);
             spell.Target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_SPELL,
                 false);
         }

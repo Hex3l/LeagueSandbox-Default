@@ -2,21 +2,24 @@
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 
 namespace Spells
 {
-    public class ItemSmiteAoE : GameScript
+    public class ItemSmiteAoE : IGameScript
     {
         public void OnStartCasting(Champion owner, Spell spell, AttackableUnit target)
         {
             ApiFunctionManager.AddParticleTarget(owner, "Global_SS_Smite_AoEStun_Monster.troy", target, 1);
-            var damage = (new float[] { 390, 410, 430, 450, 480, 510, 540, 570, 600, 640, 680, 720, 760, 800, 850, 900, 950, 1000 })[owner.GetStats().Level - 1];
+            var damage = (new float[] { 390, 410, 430, 450, 480, 510, 540, 570, 600, 640, 680, 720, 760, 800, 850, 900, 950, 1000 })[owner.Stats.Level - 1];
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_SUMMONER_SPELL, false);
             var AOEDamage = damage / 2;
-            var buff1 = ((ObjAIBase)target).AddBuffGameScript("Stun", "Stun", spell);
+            var buff1 = ((ObjAiBase)target).AddBuffGameScript("Stun", "Stun", spell);
             ApiFunctionManager.CreateTimer(1.5f, () =>
             {
-                ((ObjAIBase)target).RemoveBuffGameScript(buff1);
+                ((ObjAiBase)target).RemoveBuffGameScript(buff1);
             });
             var spellData = spell.SpellData;
             var sideTargets = ApiFunctionManager.GetUnitsInRange(target, spellData.BounceRadius, true);
@@ -31,10 +34,10 @@ namespace Spells
                     additionalTarget.TakeDamage(owner,AOEDamage,DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_SUMMONER_SPELL,false);
                     if (!additionalTarget.IsDead)
                     {
-                        var buff2 = ((ObjAIBase)additionalTarget).AddBuffGameScript("Stun", "Stun", spell);
+                        var buff2 = ((ObjAiBase)additionalTarget).AddBuffGameScript("Stun", "Stun", spell);
                         ApiFunctionManager.CreateTimer(1.5f, () =>
                          {
-                             ((ObjAIBase)additionalTarget).RemoveBuffGameScript(buff2);
+                             ((ObjAiBase)additionalTarget).RemoveBuffGameScript(buff2);
                          });
                     }
                 }
@@ -48,23 +51,23 @@ namespace Spells
 
         public void RestoreHealth(Champion owner)
         {
-            var maxHealth = owner.GetStats().HealthPoints.Total;
-            var missingHealth = (maxHealth) - (owner.GetStats().CurrentHealth);
+            var maxHealth = owner.Stats.HealthPoints.Total;
+            var missingHealth = (maxHealth) - (owner.Stats.CurrentHealth);
             owner.RestoreHealth(missingHealth);
         }
 
         public void RestoreMana(Champion owner)
         {
-            var maxMana = owner.GetStats().ManaPoints.Total;
-            var missingMana = maxMana - (owner.GetStats().CurrentMana);
-            var newMana = (owner.GetStats().CurrentMana) + (missingMana * 0.15f);
+            var maxMana = owner.Stats.ManaPoints.Total;
+            var missingMana = maxMana - (owner.Stats.CurrentMana);
+            var newMana = (owner.Stats.CurrentMana) + (missingMana * 0.15f);
             if (newMana >= maxMana)
             {
-                owner.GetStats().CurrentMana = maxMana;
+                owner.Stats.CurrentMana = maxMana;
             }
             else
             {
-                owner.GetStats().CurrentMana = newMana;
+                owner.Stats.CurrentMana = newMana;
             }
         }
 

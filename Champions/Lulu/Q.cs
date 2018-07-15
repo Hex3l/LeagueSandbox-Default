@@ -3,10 +3,13 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 
 namespace Spells
 {
-    public class LuluQ : GameScript 
+    public class LuluQ : IGameScript 
     {
         public void OnActivate(Champion owner)
         {
@@ -16,7 +19,7 @@ namespace Spells
         }
         public void OnStartCasting(Champion owner, Spell spell, AttackableUnit target)
         {
-            spell.spellAnimation("SPELL1", owner);			
+            spell.SpellAnimation("SPELL1", owner);			
         }
         public void OnFinishCasting(Champion owner, Spell spell, AttackableUnit target)
         { 
@@ -29,17 +32,17 @@ namespace Spells
         }
         public void ApplyEffects(Champion owner, AttackableUnit target, Spell spell, Projectile projectile)
         { 
-            var ap = owner.GetStats().AbilityPower.Total * 0.50f;
+            var ap = owner.Stats.AbilityPower.Total * 0.50f;
             var damage = 35 + spell.Level * 45 + ap;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
-            projectile.setToRemove();
+            projectile.SetToRemove();
 
             float time = 2.00f + 0.01f * spell.Level;
-            var buff = ((ObjAIBase) target).AddBuffGameScript("LuluQSlow", "LuluQSlow", spell);
-            var visualBuff = ApiFunctionManager.AddBuffHUDVisual("LuluQSlow", time, 1, (ObjAIBase) target);
+            var buff = ((ObjAiBase) target).AddBuffGameScript("LuluQSlow", "LuluQSlow", spell);
+            var visualBuff = ApiFunctionManager.AddBuffHudVisual("LuluQSlow", time, 1, (ObjAiBase) target);
             ApiFunctionManager.CreateTimer(time, () =>
             {
-                ApiFunctionManager.RemoveBuffHUDVisual(visualBuff);
+                ApiFunctionManager.RemoveBuffHudVisual(visualBuff);
                 owner.RemoveBuffGameScript(buff);
             });			
         }

@@ -3,10 +3,13 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 
 namespace Spells
 {
-    public class LuxMaliceCannon : GameScript
+    public class LuxMaliceCannon : IGameScript
     {
         public void OnActivate(Champion owner)
         {
@@ -26,7 +29,7 @@ namespace Spells
             spell.AddLaser(trueCoords.X, trueCoords.Y);
             ApiFunctionManager.AddParticle(owner, "LuxMaliceCannon_beam.troy", trueCoords.X, trueCoords.Y);
             ApiFunctionManager.FaceDirection(owner, trueCoords, false);
-            spell.spellAnimation("SPELL4", owner);
+            spell.SpellAnimation("SPELL4", owner);
             ApiFunctionManager.AddParticleTarget(owner, "LuxMaliceCannon_cas.troy", owner);
         }
 
@@ -36,7 +39,7 @@ namespace Spells
 
         public void ApplyEffects(Champion owner, AttackableUnit target, Spell spell, Projectile projectile)
         {
-            spell.Target.TakeDamage(owner, 200f + spell.Level * 100f + owner.GetStats().AbilityPower.Total * 0.75f,
+            spell.Target.TakeDamage(owner, 200f + spell.Level * 100f + owner.Stats.AbilityPower.Total * 0.75f,
                 DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
         }
 

@@ -4,10 +4,13 @@ using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 
 namespace Spells
 {
-    public class FallenOne : GameScript
+    public class FallenOne : IGameScript
     {
         public void OnActivate(Champion owner)
         {
@@ -28,7 +31,7 @@ namespace Spells
 
         public void OnFinishCasting(Champion owner, Spell spell, AttackableUnit target)
         {
-            var ap = owner.GetStats().AbilityPower.Total;
+            var ap = owner.Stats.AbilityPower.Total;
             var damage = 100 + spell.Level * 150 + ap * 0.6f;
             foreach (var enemyTarget in ApiFunctionManager.GetChampionsInRange(owner, 20000, true)
                 .Where(x => x.Team == CustomConvert.GetEnemyTeam(owner.Team)))

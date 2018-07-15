@@ -7,12 +7,14 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 
 namespace Spells
 {
-    class EvelynnW : GameScript
+    class EvelynnW : IGameScript
     {
-        private BuffGameScriptController FrenzyBuff;
 
         public void ApplyEffects(Champion owner, AttackableUnit target, Spell spell, Projectile projectile)
         {
@@ -28,9 +30,9 @@ namespace Spells
 
         public void OnFinishCasting(Champion owner, Spell spell, AttackableUnit target)
         {
-            spell.spellAnimation("SPELL2", owner);
+            spell.SpellAnimation("SPELL2", owner);
             ApiFunctionManager.AddParticleTarget(owner, "Evelynn_W_cas.troy", owner);
-            FrenzyBuff = owner.AddBuffGameScript("EveFrenzy", "EveFrenzy", spell, 3.0f, true);
+            owner.AddBuffGameScript("EveFrenzy", "EveFrenzy", spell, 3.0f, true);
         }
 
         public void OnStartCasting(Champion owner, Spell spell, AttackableUnit target)

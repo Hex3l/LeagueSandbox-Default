@@ -2,11 +2,14 @@
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace Spells
 {
-    public class VayneTumble : GameScript
+    public class VayneTumble : IGameScript
     {
 
         private bool _nextAutoBonusDamage = false;
@@ -52,13 +55,13 @@ namespace Spells
                 _owningSpell = spell;
             }
             _nextAutoBonusDamage = true;
-            _tumbleBuff = ApiFunctionManager.AddBuffHUDVisual("VayneTumble", 6.0f, 1, owner);
+            _tumbleBuff = ApiFunctionManager.AddBuffHudVisual("VayneTumble", 6.0f, 1, owner);
             ApiFunctionManager.CreateTimer(6.0f, () =>
             {
                 // If auto has not yet been consumed
                 if (_nextAutoBonusDamage == true)
                 {
-                    ApiFunctionManager.RemoveBuffHUDVisual(_tumbleBuff);
+                    ApiFunctionManager.RemoveBuffHudVisual(_tumbleBuff);
                     _nextAutoBonusDamage = false;
                 }
             });
@@ -69,8 +72,8 @@ namespace Spells
             if (_nextAutoBonusDamage)
             {
                 _nextAutoBonusDamage = false;
-                ApiFunctionManager.RemoveBuffHUDVisual(_tumbleBuff);
-                var ad = (new float[] { 0.3f, 0.35f, 0.4f, 0.45f, 0.5f }[_owningSpell.Level - 1]) * _owningChampion.GetStats().AttackDamage.Total;
+                ApiFunctionManager.RemoveBuffHudVisual(_tumbleBuff);
+                var ad = (new float[] { 0.3f, 0.35f, 0.4f, 0.45f, 0.5f }[_owningSpell.Level - 1]) * _owningChampion.Stats.AttackDamage.Total;
                 target.TakeDamage(_owningChampion, ad, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_PASSIVE, false);
             }
         }

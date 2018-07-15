@@ -8,27 +8,30 @@ using LeagueSandbox.GameServer.Logic.Scripting;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Packets.PacketDefinitions.S2C;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 
 namespace EveInvis
 {
-    internal class EveInvis : BuffGameScript
+    internal class EveInvis : IBuffGameScript
     {
         private double _currentTime;
         private double _lastUpdate;
-        private ObjAIBase _ownerUnit;
+        private ObjAiBase _ownerUnit;
         private Buff _visualBuff;
         
-        public void OnActivate(ObjAIBase unit, Spell ownerSpell)
+        public void OnActivate(ObjAiBase unit, Spell ownerSpell)
         {
             _currentTime = 0;
             _lastUpdate = 0;
             _ownerUnit = unit;
-            _visualBuff = ApiFunctionManager.AddBuffHUDVisual("EveInvis", 5.0f, 5, _ownerUnit, -1);
+            _visualBuff = ApiFunctionManager.AddBuffHudVisual("EveInvis", 5.0f, 5, _ownerUnit, -1);
         }
 
-        public void OnDeactivate(ObjAIBase unit)
+        public void OnDeactivate(ObjAiBase unit)
         {
-            ApiFunctionManager.RemoveBuffHUDVisual(_visualBuff);
+            ApiFunctionManager.RemoveBuffHudVisual(_visualBuff);
         }
 
         public void OnUpdate(double diff)
@@ -36,16 +39,16 @@ namespace EveInvis
             _currentTime += diff;
             if (_currentTime >= (_lastUpdate + 1000))
             {
-                var manaRegenerated = _ownerUnit.GetStats().ManaPoints.Total / 100;
-                var maxMana = _ownerUnit.GetStats().ManaPoints.Total;
-                var newMana = _ownerUnit.GetStats().CurrentMana + manaRegenerated;
+                var manaRegenerated = _ownerUnit.Stats.ManaPoints.Total / 100;
+                var maxMana = _ownerUnit.Stats.ManaPoints.Total;
+                var newMana = _ownerUnit.Stats.CurrentMana + manaRegenerated;
                 if (maxMana >= newMana)
                 {
-                    _ownerUnit.GetStats().CurrentMana = newMana;
+                    _ownerUnit.Stats.CurrentMana = newMana;
                 }
                 else
                 {
-                    _ownerUnit.GetStats().CurrentMana = maxMana;
+                    _ownerUnit.Stats.CurrentMana = maxMana;
                 }
 
                 _lastUpdate = _currentTime;

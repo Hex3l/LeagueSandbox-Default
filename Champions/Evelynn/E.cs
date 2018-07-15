@@ -7,12 +7,14 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 
 namespace Spells
 {
-    class EvelynnE : GameScript
+    class EvelynnE : IGameScript
     {
-        private BuffGameScriptController RavageBuff;
 
         public void ApplyEffects(Champion owner, AttackableUnit target, Spell spell, Projectile projectile)
         {
@@ -28,20 +30,20 @@ namespace Spells
 
         public void OnStartCasting(Champion owner, Spell spell, AttackableUnit target)
         {
-            spell.spellAnimation("SPELL3", owner);
+            spell.SpellAnimation("SPELL3", owner);
         }
 
         public void OnFinishCasting(Champion owner, Spell spell, AttackableUnit target)
         {
-            var ad = (owner.GetStats().AttackDamage.Total - owner.GetStats().AttackDamage.BaseValue) * 0.5f;
-            var ap = owner.GetStats().AbilityPower.Total * 0.5f;    
+            var ad = (owner.Stats.AttackDamage.Total - owner.Stats.AttackDamage.BaseValue) * 0.5f;
+            var ap = owner.Stats.AbilityPower.Total * 0.5f;    
 
             var damage = ((new float[] { 35 , 55 , 75 , 95 , 115 }[spell.Level - 1]) + ad + ap) / 2;
 
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
 
-            RavageBuff = owner.AddBuffGameScript("EveRavage", "EveRavage", spell, 3.0f, true);
+            owner.AddBuffGameScript("EveRavage", "EveRavage", spell, 3.0f, true);
         }
 
         public void OnUpdate(double diff)

@@ -1,13 +1,17 @@
 ﻿using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Scripting;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 
 namespace MeditateBuff
 {
-    internal class MeditateBuff: BuffGameScript
+    internal class MeditateBuff : IBuffGameScript
     {
-        private ChampionStatModifier _statMod;
+        private StatsModifier _statMod;
 
-        public void OnActivate(ObjAIBase unit, Spell ownerSpell)
+        public void OnActivate(ObjAiBase unit, Spell ownerSpell)
         {
             //in order to add the damage reduction I'll use armor & magic resist so here is how it works :
             //damage percentage that'll hit yi = 100 / 100 + armor |or| damage percentage = 100  / 100+ magic resist
@@ -18,13 +22,13 @@ namespace MeditateBuff
             // during the operations 50% will become 0.5
             // example : (100 / 0.5 ) - 100 = 100armor / magic resist
             // yeh this is really broken but don't forget that it's yi
-            _statMod = new ChampionStatModifier();
+            _statMod = new StatsModifier();
             _statMod.Armor.FlatBonus = (new float[] { 100f, 122.22f, 150.0f, 185.71f, 233.33f })[ownerSpell.Level - 1];
             _statMod.MagicResist.FlatBonus = (new float[] { 100f, 122.22f, 150.0f, 185.71f, 233.33f })[ownerSpell.Level - 1];
             unit.AddStatModifier(_statMod);
         }
 
-        public void OnDeactivate(ObjAIBase unit)
+        public void OnDeactivate(ObjAiBase unit)
         {
             unit.RemoveStatModifier(_statMod);
         }

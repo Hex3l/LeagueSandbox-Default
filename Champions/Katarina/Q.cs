@@ -6,10 +6,13 @@ using LeagueSandbox.GameServer.Logic.API;
 using System.Linq;
 using LeagueSandbox.GameServer;
 using System.Collections.Generic;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 
 namespace Spells
 {
-    public class KatarinaQ : GameScript
+    public class KatarinaQ : IGameScript
     {
         private Particle _mark;
         private Champion _owningChampion;
@@ -36,7 +39,7 @@ namespace Spells
 
             ApiFunctionManager.RemoveParticle(_mark);
 
-            var damage = new[] { 15, 30, 45, 60, 75 }[_owningSpell.Level - 1] + _owningChampion.GetStats().AbilityPower.Total * 0.15f;
+            var damage = new[] { 15, 30, 45, 60, 75 }[_owningSpell.Level - 1] + _owningChampion.Stats.AbilityPower.Total * 0.15f;
             target.TakeDamage(_owningChampion, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_PASSIVE, false);
 
             _mark = null;
@@ -62,7 +65,7 @@ namespace Spells
 
             foreach (var enemyTarget in ApiFunctionManager.GetUnitsInRange(target, 625, true))
             {
-                if (enemyTarget != null && enemyTarget.Team == CustomConvert.GetEnemyTeam(owner.Team) && enemyTarget != target && enemyTarget != owner && target.GetDistanceTo(enemyTarget) < 100 && !ApiFunctionManager.UnitIsTurret(enemyTarget))
+                if ((enemyTarget != null) && (enemyTarget.Team != owner.Team) && (enemyTarget != target) && (enemyTarget != owner) && (target.GetDistanceTo(enemyTarget) < 100) && !(enemyTarget is BaseTurret))
                 {
                     ApiFunctionManager.CreateTimer(3.0f, () => {
                         ApiFunctionManager.AddParticle(owner, "katarina_bouncingBlades_mis.troy", enemyTarget.X, enemyTarget.Y);
@@ -76,15 +79,15 @@ namespace Spells
 
         public void OnFinishCasting(Champion owner, Spell spell, AttackableUnit target)
         {
-            var damage = new[] { 60, 85, 110, 135, 160 }[spell.Level - 1] + owner.GetStats().AbilityPower.Total * 0.45f;
+            var damage = new[] { 60, 85, 110, 135, 160 }[spell.Level - 1] + owner.Stats.AbilityPower.Total * 0.45f;
 
             foreach (var enemyTarget in ApiFunctionManager.GetUnitsInRange(target, 625, true))
             {
-                if (enemyTarget != null && enemyTarget.Team == CustomConvert.GetEnemyTeam(owner.Team) && enemyTarget != owner && !ApiFunctionManager.UnitIsTurret(enemyTarget))
+                if ((enemyTarget != null) && (enemyTarget.Team != owner.Team) && (enemyTarget != target) && (enemyTarget != owner) && (target.GetDistanceTo(enemyTarget) < 100) && !(enemyTarget is BaseTurret))
                 {
                     enemyTarget.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
 
-                    if (!enemyTarget.IsDead || !ApiFunctionManager.UnitIsChampion(enemyTarget))
+                    if (!enemyTarget.IsDead)
                     {
                         _markTarget.Add(enemyTarget);
                         _mark = ApiFunctionManager.AddParticleTarget(owner, "katarina_daggered.troy", enemyTarget);
@@ -95,7 +98,7 @@ namespace Spells
 
         public void ApplyEffects(Champion owner, AttackableUnit target, Spell spell, Projectile projectile)
         {
-            projectile.setToRemove();
+            projectile.SetToRemove();
             ApiFunctionManager.CreateTimer(6.0f, () =>
             {
                 if (_mark == null)

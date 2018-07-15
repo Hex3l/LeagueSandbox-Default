@@ -3,10 +3,13 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 
 namespace Spells
 {
-    public class AkaliMota : GameScript
+    public class AkaliMota : IGameScript
     {
         public static Particle mark;
         static Champion owner;
@@ -24,18 +27,17 @@ namespace Spells
 
             if (AkaliMota.target != target)
                 return;
-
-            ApiFunctionManager.LogInfo("Mark got procced, removing it earlier");
+            
             ApiFunctionManager.RemoveParticle(mark);
             ApiFunctionManager.AddParticle(owner, "akali_mark_impact_tar.troy", mark.X, mark.Y);
 
-            var ap = owner.GetStats().AbilityPower.Total * 0.5f;
+            var ap = owner.Stats.AbilityPower.Total * 0.5f;
             var damage = 20 + owner.Spells[0].Level * 25 + ap;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
 
             var energy = 15 + owner.Spells[0].Level * 5;
 
-            owner.GetStats().CurrentMana += energy;
+            owner.Stats.CurrentMana += energy;
 
             mark = null;
         }
@@ -54,22 +56,21 @@ namespace Spells
             var to = Vector2.Normalize(new Vector2(target.X, target.Y) - current);
             var range = to * 1150;
             var trueCoords = current + range;
-            spell.AddProjectile("AkaliMota", trueCoords.X, trueCoords.Y);
+            spell.AddProjectileTarget("AkaliMota", target);
         }
 
         public void ApplyEffects(Champion owner, AttackableUnit target, Spell spell, Projectile projectile)
         {
             AkaliMota.target = target;
-            var ap = owner.GetStats().AbilityPower.Total * 0.4f;
+            var ap = owner.Stats.AbilityPower.Total * 0.4f;
             var damage = 15 + spell.Level * 20 + ap;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
             mark = ApiFunctionManager.AddParticleTarget(owner, "akali_markOftheAssasin_marker_tar_02.troy", target, 1, "");
-            projectile.setToRemove();
+            projectile.SetToRemove();
             ApiFunctionManager.CreateTimer(6.0f, () =>
             {
                 if (mark == null)
                     return;
-                ApiFunctionManager.LogInfo("6 second timer finished, removing the mark of the assassin");
                 ApiFunctionManager.RemoveParticle(mark);
             });
         }

@@ -2,13 +2,17 @@
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using System.Numerics;
 using LeagueSandbox.GameServer.Logic;
+using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 
 namespace Spells
 {
-    public class MissFortuneScattershot : GameScript
+    public class MissFortuneScattershot : IGameScript
     {
 
         public void OnActivate(Champion owner)
@@ -59,7 +63,7 @@ namespace Spells
         public void DamageTargetsInZone(Champion owner, Spell spell, AttackableUnit target, Target ZoneCenter)
         {
             List<AttackableUnit> units = ApiFunctionManager.GetUnitsInRange(ZoneCenter, 500, true);
-            var ap = owner.GetStats().AbilityPower.Total * 0.1f;
+            var ap = owner.Stats.AbilityPower.Total * 0.1f;
             var damage = ((new float[] { 11.25f, 18.125f, 25f, 31.875f, 38.75f })[spell.Level - 1]) + ap;
             foreach (AttackableUnit unit in units)
             {
