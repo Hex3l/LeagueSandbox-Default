@@ -3,10 +3,13 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 
 namespace Spells
 {
-    public class EzrealEssenceFlux : GameScript
+    public class EzrealEssenceFlux : IGameScript
     {
         public void OnActivate(Champion owner)
         {
@@ -36,17 +39,17 @@ namespace Spells
             {
                 if (target.Team == owner.Team)
                 {
-                    var buff = ((ObjAIBase)target).AddBuffGameScript("EssenceFluxAttackSpeed", "EssenceFluxAttackSpeed", spell);
-                    var visualBuff = ApiFunctionManager.AddBuffHUDVisual("EzrealEssenceFluxBuff", 5.0f, 0, owner);
+                    var buff = ((ObjAiBase)target).AddBuffGameScript("EssenceFluxAttackSpeed", "EssenceFluxAttackSpeed", spell);
+                    var visualBuff = ApiFunctionManager.AddBuffHudVisual("EzrealEssenceFluxBuff", 5.0f, 0, owner);
                     ApiFunctionManager.CreateTimer(5.0f, () =>
                     {
                         owner.RemoveBuffGameScript(buff);
-                        ApiFunctionManager.RemoveBuffHUDVisual(visualBuff);
+                        ApiFunctionManager.RemoveBuffHudVisual(visualBuff);
                     });
                 }
                 else
                 {
-                    var ap = owner.GetStats().AbilityPower.Total * 0.8f;
+                    var ap = owner.Stats.AbilityPower.Total * 0.8f;
                     var damage = (new float[] { 80, 130, 180, 230, 280 }[spell.Level - 1]) + ap;
                     target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
                 }

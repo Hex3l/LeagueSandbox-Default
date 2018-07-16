@@ -3,10 +3,13 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 
 namespace Spells
 {
-    public class GravesMove : GameScript
+    public class GravesMove : IGameScript
     {
 
         private Champion _owningChampion;
@@ -48,7 +51,7 @@ namespace Spells
 
             ApiFunctionManager.DashToLocation(owner, trueCoords.X, trueCoords.Y, 1200, false, "Spell3");
             Particle p = ApiFunctionManager.AddParticleTarget(owner, "Graves_Move_OnBuffActivate.troy", owner);
-            var visualBuff1 = ApiFunctionManager.AddBuffHUDVisual("GravesMoveSteroid", 5.0f, 1, owner, 4.0f);
+            var visualBuff1 = ApiFunctionManager.AddBuffHudVisual("GravesMoveSteroid", 5.0f, 1, owner, 4.0f);
             var buff = owner.AddBuffGameScript("Quickdraw", "Quickdraw", spell, 4.0f, true);
             ApiFunctionManager.CreateTimer(4.0f, () =>
             {

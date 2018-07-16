@@ -2,11 +2,14 @@ using System.Numerics;
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace Spells
 {
-    public class Meditate : GameScript
+    public class Meditate : IGameScript
     {
         public void OnActivate(Champion owner)
         {
@@ -25,16 +28,16 @@ namespace Spells
                 {
                     
                     ApiFunctionManager.AddParticleTarget(owner, "Meditate_eff.troy", owner, 1);
-                    spell.spellAnimation("SPELL2", owner);
+                    spell.SpellAnimation("SPELL2", owner);
                     
                     
 
-                    float healthPercentage = owner.GetStats().CurrentHealth / owner.GetStats().HealthPoints.Total;
+                    float healthPercentage = owner.Stats.CurrentHealth / owner.Stats.HealthPoints.Total;
                     //Example : 50/100= 0.5 
                     float missingHealthPercentage = 1.0f - healthPercentage;
                     //Right now the result would be 0.5 missingHP
                     //next we have to heal yi for 30/50/70/90/110 (+0.3) ap * 1% for every 1% missing hp
-                    float ap = owner.GetStats().AbilityPower.Total * 0.3f;
+                    float ap = owner.Stats.AbilityPower.Total * 0.3f;
                     float hptorecover = new float[] { 30f, 50f, 70f, 90f, 110f }[spell.Level - 1] + ap;
                     float bonushealth = hptorecover * missingHealthPercentage;
 
@@ -42,7 +45,7 @@ namespace Spells
                     float hptorecoverinhalfasec = totalhealthtorecover / 4f;
                     owner.RestoreHealth(hptorecoverinhalfasec);
                 });
-                var buff = ((ObjAIBase)target).AddBuffGameScript("MeditateBuff", "MeditateBuff", spell, -1, true);
+                var buff = ((ObjAiBase)target).AddBuffGameScript("MeditateBuff", "MeditateBuff", spell, -1, true);
 
                 ApiFunctionManager.CreateTimer(4.0f, () =>
                 {

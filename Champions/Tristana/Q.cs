@@ -1,11 +1,14 @@
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace Spells
 {
-    public class RapidFire : GameScript
+    public class RapidFire : IGameScript
     {
         public void OnActivate(Champion owner)
         {
@@ -23,11 +26,11 @@ namespace Spells
 
         public void OnStartCasting(Champion owner, Spell spell, AttackableUnit target)
         {
-            var buff = ((ObjAIBase) target).AddBuffGameScript("TristanaQ", "TristanaQ", spell);
-            var visualBuff = ApiFunctionManager.AddBuffHUDVisual("RapidFire", 5.0f, 1, owner);
+            var buff = ((ObjAiBase) target).AddBuffGameScript("TristanaQ", "TristanaQ", spell);
+            var visualBuff = ApiFunctionManager.AddBuffHudVisual("RapidFire", 5.0f, 1, owner);
             ApiFunctionManager.CreateTimer(5.0f, () =>
             {
-                ApiFunctionManager.RemoveBuffHUDVisual(visualBuff);
+                ApiFunctionManager.RemoveBuffHudVisual(visualBuff);
                 owner.RemoveBuffGameScript(buff);
             });				
         }

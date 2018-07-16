@@ -2,17 +2,21 @@ using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 
 namespace Spells
 {
-    public class SummonerDot : GameScript
+    public class SummonerDot : IGameScript
     {
         public void OnStartCasting(Champion owner, Spell spell, AttackableUnit target)
         {
-            var visualBuff = ApiFunctionManager.AddBuffHUDVisual("SummonerDot", 5.0f, 1, (ObjAIBase) target);
+            var visualBuff = ApiFunctionManager.AddBuffHudVisual("SummonerDot", 5.0f, 1, (ObjAiBase) target);
             Particle p = ApiFunctionManager.AddParticleTarget(owner, "Global_SS_Ignite.troy", target, 1);
-            ((ObjAIBase)target).AddBuffGameScript("GrievousWounds", "GrievousWounds", spell, 4.0f);
-            var damage = 10 + owner.GetStats().Level * 4;
+            ((ObjAiBase)target).AddBuffGameScript("GrievousWounds", "GrievousWounds", spell, 4.0f);
+            var damage = 10 + owner.Stats.Level * 4;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_SUMMONER_SPELL, false);
             ApiFunctionManager.CreateTimer(1.0f,
                 () =>
@@ -36,7 +40,7 @@ namespace Spells
             {
                 target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_SUMMONER_SPELL, false);
                 ApiFunctionManager.RemoveParticle(p);
-                ApiFunctionManager.RemoveBuffHUDVisual(visualBuff);
+                ApiFunctionManager.RemoveBuffHudVisual(visualBuff);
             });
         }
 

@@ -1,11 +1,14 @@
 ﻿using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 
 namespace Spells
 {
-    public class MasterYiDoubleStrike : GameScript
+    public class MasterYiDoubleStrike : IGameScript
     {
         private Champion _owningChampion;
         private Spell _owningSpell;
@@ -37,7 +40,7 @@ namespace Spells
         void OnAutoAttack(AttackableUnit target, bool isCrit)
         {
             
-            ObjAIBase dsTarget = target as ObjAIBase;
+            ObjAiBase dsTarget = target as ObjAiBase;
             //1.5% bonus dmg every 4 attacks
             _doublestrikeStacks += 1;
             switch (_doublestrikeStacks)
@@ -53,7 +56,7 @@ namespace Spells
                     break;
                 case 4:
                     ApiFunctionManager.LogInfo("MasterYi's 4");
-                    float damage = _owningChampion.GetStats().AttackDamage.Total * 1.5f;
+                    float damage = _owningChampion.Stats.AttackDamage.Total * 1.5f;
                     dsTarget.TakeDamage(_owningChampion, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_PASSIVE, false);
                     _doublestrikeStacks = 0;
                     break;

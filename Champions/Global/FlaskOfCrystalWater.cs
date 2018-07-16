@@ -2,10 +2,13 @@
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 
 namespace Spells
 {
-    public class FlaskOfCrystalWater : GameScript
+    public class FlaskOfCrystalWater : IGameScript
     {
         public void OnStartCasting(Champion owner, Spell spell, AttackableUnit target)
         {
@@ -17,15 +20,15 @@ namespace Spells
             {
                 ApiFunctionManager.CreateTimer(i * 0.5f, () =>
                    {
-                       var maxMana = owner.GetStats().ManaPoints.Total;
-                       var newMana = owner.GetStats().CurrentMana + 3.33f;
+                       var maxMana = owner.Stats.ManaPoints.Total;
+                       var newMana = owner.Stats.CurrentMana + 3.33f;
                        if (newMana > maxMana)
                        {
-                           owner.GetStats().CurrentMana = maxMana;
+                           owner.Stats.CurrentMana = maxMana;
                        }
                        else
                        {
-                           owner.GetStats().CurrentMana = newMana;
+                           owner.Stats.CurrentMana = newMana;
                        }
                    });
             }

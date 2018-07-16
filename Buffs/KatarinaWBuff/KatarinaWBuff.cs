@@ -1,20 +1,24 @@
 ﻿using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.Scripting;
+using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 
 namespace KatarinaWBuff
 {
-    internal class KatarinaWBuff : BuffGameScript
+    internal class KatarinaWBuff : IBuffGameScript
     {
-        private ChampionStatModifier _statMod;
+        private StatsModifier _statMod;
 
-        public void OnActivate(ObjAIBase unit, Spell ownerSpell)
+        public void OnActivate(ObjAiBase unit, Spell ownerSpell)
         {
-            _statMod = new ChampionStatModifier();
+            _statMod = new StatsModifier();
             _statMod.MoveSpeed.PercentBonus = (new float[] { 0.15f, 0.20f, 0.25f, 0.30f, 0.35f })[ownerSpell.Level - 1];
             unit.AddStatModifier(_statMod);
         }
 
-        public void OnDeactivate(ObjAIBase unit)
+        public void OnDeactivate(ObjAiBase unit)
         {
             unit.RemoveStatModifier(_statMod);
         }

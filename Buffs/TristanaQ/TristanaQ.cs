@@ -5,17 +5,16 @@ using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
 using LeagueSandbox.GameServer.Logic.GameObjects.Stats;
 
-namespace HighlanderBuff
+namespace TristanaQ
 {
-    internal class HighlanderBuff : IBuffGameScript
+    internal class TristanaQ : IBuffGameScript
     {
         private StatsModifier _statMod;
 
         public void OnActivate(ObjAiBase unit, Spell ownerSpell)
         {
             _statMod = new StatsModifier();
-            _statMod.AttackSpeed.PercentBonus = (new float[] { 0.3f , 0.55f , 0.8f })[ownerSpell.Level - 1];
-            _statMod.MoveSpeed.PercentBonus = (new float[] { 0.5f , 0.6f , 0.7f })[ownerSpell.Level - 1];
+            _statMod.AttackSpeed.PercentBonus = _statMod.AttackSpeed.PercentBonus + (10f + 20f * ownerSpell.Level) / 100f;
             unit.AddStatModifier(_statMod);
         }
 
@@ -26,7 +25,7 @@ namespace HighlanderBuff
 
         public void OnUpdate(double diff)
         {
-
+            
         }
     }
 }

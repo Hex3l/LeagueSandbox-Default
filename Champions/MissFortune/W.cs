@@ -2,28 +2,31 @@
 using LeagueSandbox.GameServer.Logic.GameObjects;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using System;
 using LeagueSandbox.GameServer.Logic;
 
 namespace Spells
 {
-    public class MissFortuneViciousStrikes : GameScript
+    public class MissFortuneViciousStrikes : IGameScript
     {
 
         private double _currentTime;
         private bool _impureShotsLearned;
         private Champion _owningChampion;
-        private Dictionary<ObjAIBase, double> _targetsByLastHitTime;
-        private Dictionary<ObjAIBase, int> _targetsByStackCount;
+        private Dictionary<ObjAiBase, double> _targetsByLastHitTime;
+        private Dictionary<ObjAiBase, int> _targetsByStackCount;
 
         public void OnActivate(Champion owner)
         {
             _owningChampion = owner;
             _currentTime = 0;
             _impureShotsLearned = false;
-            _targetsByLastHitTime = new Dictionary<ObjAIBase, double>();
-            _targetsByStackCount = new Dictionary<ObjAIBase, int>();
+            _targetsByLastHitTime = new Dictionary<ObjAiBase, double>();
+            _targetsByStackCount = new Dictionary<ObjAiBase, int>();
             ApiEventManager.OnHitUnit.AddListener(this, owner, OnAutoAttack);
         }
 
@@ -38,7 +41,7 @@ namespace Spells
         public void OnFinishCasting(Champion owner, Spell spell, AttackableUnit target)
         {
             owner.AddBuffGameScript("ImpureShotsActive", "ImpureShotsActive", spell,6.0f, true);
-            ApiFunctionManager.AddBuffHUDVisual("MissFortuneViciousStrikes", 6.0f, 1, owner, 6.0f);
+            ApiFunctionManager.AddBuffHudVisual("MissFortuneViciousStrikes", 6.0f, 1, owner, 6.0f);
         }
 
         public void OnAutoAttack(AttackableUnit target, bool isCrit = false)
@@ -53,7 +56,7 @@ namespace Spells
             }
             if (_impureShotsLearned)
             {
-                ObjAIBase impureTarget = target as ObjAIBase;
+                ObjAiBase impureTarget = target as ObjAiBase;
                 if (impureTarget != null)
                 {
                     Spell bulletTime = _owningChampion.GetSpell(3);
@@ -71,7 +74,7 @@ namespace Spells
                             _targetsByStackCount[impureTarget] += 1;
                         }
                     }
-                    var ad = _owningChampion.GetStats().AttackDamage.Total * (0.06f * _targetsByStackCount[impureTarget]);
+                    var ad = _owningChampion.Stats.AttackDamage.Total * (0.06f * _targetsByStackCount[impureTarget]);
                     target.TakeDamage(_owningChampion, ad, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_PASSIVE, false);
                 }
             }
@@ -84,7 +87,7 @@ namespace Spells
         public void OnUpdate(double diff)
         {
             _currentTime += diff;
-            List<ObjAIBase> impureTargets = new List<ObjAIBase>();
+            List<ObjAiBase> impureTargets = new List<ObjAiBase>();
             foreach(var target in _targetsByLastHitTime.Keys)
             {
                 impureTargets.Add(target);

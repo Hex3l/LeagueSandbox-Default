@@ -5,10 +5,14 @@ using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Logic.Scripting.CSharp;
 using System.Numerics;
 using System;
+using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Logic.GameObjects.Spells;
+using LeagueSandbox.GameServer.Logic.GameObjects.Missiles;
+using LeagueSandbox.GameServer.Logic.GameObjects.Other;
 
 namespace Spells
 {
-    class EvelynnR : GameScript
+    class EvelynnR : IGameScript
     {
         public void ApplyEffects(Champion owner, AttackableUnit target, Spell spell, Projectile projectile)
         {
@@ -44,10 +48,10 @@ namespace Spells
             }
 
             Particle p = ApiFunctionManager.AddParticleTarget(owner, "Evelynn_R_cas.troy", ZoneCenter);
-            spell.spellAnimation("SPELL4", owner);
+            spell.SpellAnimation("SPELL4", owner);
 
             List<AttackableUnit> units = ApiFunctionManager.GetUnitsInRange(ZoneCenter, 250, true);
-            var ap = owner.GetStats().AbilityPower.Total * 0.01f;
+            var ap = owner.Stats.AbilityPower.Total * 0.01f;
             var percentHealthDamage = ((new float[] { 0.15f, 0.20f, 0.25f })[spell.Level]) + ap;
             var damage = 0.0f;
             var monsterDamage = 0.0f;
@@ -58,16 +62,16 @@ namespace Spells
                 {
                     if (unit is Champion || unit is Minion)
                     {
-                        damage = unit.GetStats().CurrentHealth * percentHealthDamage;
+                        damage = unit.Stats.CurrentHealth * percentHealthDamage;
                         unit.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
-                        ((ObjAIBase)unit).AddBuffGameScript("EveAgonySlow", "EveAgonySlow", spell, 2.0f, true);
+                        ((ObjAiBase)unit).AddBuffGameScript("EveAgonySlow", "EveAgonySlow", spell, 2.0f, true);
                     }
                     else if (unit is Monster)
                     {
-                        damage = unit.GetStats().CurrentHealth * percentHealthDamage;
+                        damage = unit.Stats.CurrentHealth * percentHealthDamage;
                         monsterDamage = Math.Max(damage, 1000);
                         unit.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
-                        ((ObjAIBase)unit).AddBuffGameScript("EveAgonySlow", "EveAgonySlow", spell, 2.0f, true);
+                        ((ObjAiBase)unit).AddBuffGameScript("EveAgonySlow", "EveAgonySlow", spell, 2.0f, true);
                     }
                 }
             }
