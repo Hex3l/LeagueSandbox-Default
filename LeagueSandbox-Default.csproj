@@ -56,6 +56,11 @@
     <Compile Include="Buffs\Overdrive\Overdrive.cs" />
     <Compile Include="Buffs\Quickdraw\Quickdraw.cs" />
     <Compile Include="Buffs\Silence\Silence.cs" />
+    <Compile Include="Champions\Aatrox\E.cs" />
+    <Compile Include="Champions\Aatrox\Passive.cs" />
+    <Compile Include="Champions\Aatrox\Q.cs" />
+    <Compile Include="Champions\Aatrox\R.cs" />
+    <Compile Include="Champions\Aatrox\W.cs" />
     <Compile Include="Champions\Akali\E.cs" />
     <Compile Include="Champions\Akali\Passive.cs" />
     <Compile Include="Champions\Akali\Q.cs" />
